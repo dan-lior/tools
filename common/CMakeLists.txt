@@ -4,5 +4,4 @@ set (CMAKE_CXX_STANDARD 17)
 
 add_library(common source/dummy.cpp)
 target_include_directories(common PUBLIC include/)
-#target_include_directories(common PUBLIC "/home/dan/git-repos/eigen-3.4.0/")
 target_include_directories(common PUBLIC "../../eigen-3.4.0/")
