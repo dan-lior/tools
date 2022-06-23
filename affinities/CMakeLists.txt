@@ -10,4 +10,4 @@ add_library(affinities INTERFACE)
 target_include_directories(affinities INTERFACE include/)
 
 add_subdirectory(../common/ build_common)
-target_link_libraries(affinities INTERFACE common)
+target_include_directories(affinities INTERFACE ../common/include/)
