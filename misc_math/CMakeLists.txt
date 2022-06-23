@@ -5,5 +5,5 @@ set (CMAKE_CXX_STANDARD 17)
 add_library(misc_math source/misc_math.cpp)
 target_include_directories(misc_math PUBLIC include/)
 
-add_subdirectory(../common/ build_common)
-target_link_libraries(misc_math common)
+target_include_directories(misc_math PUBLIC ../common/include/) 
+target_include_directories(misc_math PUBLIC "../../eigen-3.4.0/")

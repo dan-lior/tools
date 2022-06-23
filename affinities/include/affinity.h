@@ -15,12 +15,12 @@ struct Affinity
     // eg, for dim_source=2, this matrix acts on a vector of the form [x y 1]^t
     MatrixRect<1+dim_target, 1+dim_source> single_matrix_representation() const;
 
-    // evaluation
-    Vector<dim_target> operator()(const Vector<dim_source>& p) const;
-
     // composition (A*B)(x) := A(B(x))
     template<uint64_t dim_presource>
-    Affinity<dim_target, dim_presource> operator*(const Affinity<dim_source, dim_presource>& other) const;
+    Affinity<dim_target, dim_presource> operator*(const Affinity<dim_target, dim_source>& other) const;
+
+    // evaluation
+    Vector<dim_target> operator()(const Vector<dim_source>& p) const;
 
     MatrixRect<dim_target, dim_source> linear_part;
     Vector<dim_target> translation_part;
@@ -31,10 +31,11 @@ template<uint64_t dim>
 struct AffinityIso : public Affinity<dim, dim>
 {
     AffinityIso(const Matrix<dim>& linear = Matrix<dim>::Identity(), const Vector<dim>& translation = Vector<dim>::Zero());
-    AffinityIso(const std::vector<Vector<dim>>& source, const std::vector<Vector<dim>>& target); // procrustes
     AffinityIso(const Affinity<dim, dim>& other);
 
-    // this overload ensures that the composition of two AffinityIso objects is another AffinityIso object (not merely an Affinity object)
+    static AffinityIso<dim> procrustes(const std::vector<Vector<dim>>& source, const std::vector<Vector<dim>>& target, bool force_special_orthogonal = false);
+    
+    // need the overload so that the composition of AffinityIso's is another AffinityIso
     AffinityIso<dim> operator*(const AffinityIso<dim>& other) const;
 
     AffinityIso<dim> inverse() const;

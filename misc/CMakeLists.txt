@@ -5,7 +5,6 @@ set (CMAKE_CXX_STANDARD 17)
 add_library(misc source/misc.cpp)
 target_include_directories(misc PUBLIC include/)
 
-add_subdirectory(../common/ build_common)
-target_link_libraries(misc common)
-
+target_include_directories(misc PUBLIC "../common/include/") 
 target_include_directories(misc PUBLIC "../../json/single_include/")
+target_include_directories(misc PUBLIC "../../eigen-3.4.0/")
