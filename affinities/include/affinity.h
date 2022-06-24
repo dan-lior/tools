@@ -3,11 +3,11 @@
 #include "common_defs.h"
 
 
+// models an affine map: x --> Ax + b
 
 template<uint64_t dim_target, uint64_t dim_source>
 struct Affinity
 {
-    // specifies the affine map: x --> Ax + b
     Affinity(
         const MatrixRect<dim_target, dim_source>& linear = MatrixRect<dim_target, dim_source>::Identity(), 
         const Vector<dim_target>& translation = Vector<dim_target>::Zero());
@@ -27,6 +27,8 @@ struct Affinity
 };
 
 
+// models an invertible affine map
+
 template<uint64_t dim>
 struct AffinityIso : public Affinity<dim, dim>
 {
@@ -35,7 +37,7 @@ struct AffinityIso : public Affinity<dim, dim>
 
     static AffinityIso<dim> procrustes(const std::vector<Vector<dim>>& source, const std::vector<Vector<dim>>& target, bool force_special_orthogonal = false);
     
-    // need the overload so that the composition of AffinityIso's is another AffinityIso
+    // ensure that the composition of AffinityIso objects is another AffinityIso object
     AffinityIso<dim> operator*(const AffinityIso<dim>& other) const;
 
     AffinityIso<dim> inverse() const;
