@@ -1,0 +1,14 @@
+function check_for_file()
+{
+    VERIFIED=0
+    while [ $VERIFIED -eq 0 ]
+    do
+        echo -ne "checking that file: $1 exists ..."
+        if [ -f $1 ]; then
+            echo " SUCCESS"
+            VERIFIED=1
+        else
+            read -p  " FAILURE. Try again and press any key to continue"
+        fi
+    done
+}
