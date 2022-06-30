@@ -58,6 +58,8 @@ struct GridIso
         return affinity.inverse()(position);
     }
 
+    // todo: compute fixed points!!!
+
     const Indexer<dim> indexer;
     const AffinityIso<dim> affinity;
 };
