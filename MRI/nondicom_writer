@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# this line is obviously not portable. Adjust it as necessary. 
+PATH_TO_MATLAB_EXECUTABLE=/home/dan/MATLAB/R2021b/bin
+
+# this folder location varies from patient
+STUDY_FOLDER="/home/dan/git-repos/tools/MRI/input/patient4/DICOM/PAT_0000/STD_0000/"
+
+OUTPUT_DIRECTORY="patient4_nondicom_data/"
+
+# these three folders have sequence names of the form: WIP__f_v*, 
+# where * indicates encoding speed (eg 200) and phase identity (one of three possibilities: ap, in, fh)
+PHASE1_FOLDER="$STUDY_FOLDER"SER_0012/OBJ_0001/
+PHASE2_FOLDER="$STUDY_FOLDER"SER_0013/OBJ_0001/
+PHASE3_FOLDER="$STUDY_FOLDER"SER_0014/OBJ_0001/
+
+# this folder has a sequence name that seems to have the form: WIP_fl3d1r*, 
+# where the * indicates some integer 
+MAG_FOLDER="$STUDY_FOLDER"SER_0015/OBJ_0001/
+
+rm -rf $OUTPUT_DIRECTORY
+mkdir $OUTPUT_DIRECTORY
+
+/bin/bash ../bash_scripts/check_for_directory $OUTPUT_DIRECTORY
+
+# create a string in json format to contain the arguments to be sent to the matlab function
+JSON_FMT='{"phase1_folder":"%s", "phase2_folder":"%s", "phase3_folder":"%s", "mag_folder":"%s", "output_folder":"%s"}\n'
+JSON_STRING=$(printf "$JSON_FMT" "$PHASE1_FOLDER" "$PHASE2_FOLDER" "$PHASE3_FOLDER" "$MAG_FOLDER" "$OUTPUT_DIRECTORY")
+JSON_STRING_DECORATED_FOR_MATLAB=\'$JSON_STRING\'
+
+cd MatlabScripts
+
+$PATH_TO_MATLAB_EXECUTABLE/matlab -nojvm -batch "extract_4dmri_data_and_save_to_file($JSON_STRING_DECORATED_FOR_MATLAB)"
+
