@@ -65,54 +65,6 @@ struct GridIso
 };
 
 
-Index<dim> grid_dimensions_from_dicom_metadata(const nlohmann::json& metadata)
-{
-    const uint64_t nx = metadata["width"];
-    const uint64_t ny = metadata["height"];
-    const uint64_t nz = metadata["depth"];
-
-    return Index<dim>(nx,ny,nz);
-}
-
-AffinityIso<3> affinity_from_dicom_metadata(const nlohmann::json& metadata)
-{
-    // define a translation from the dicom data:
-    Vector<3> b;
-    b(0) = metadata["image_position"]["x"];
-    b(1) = metadata["image_position"]["y"];
-    b(2) = metadata["image_position"]["z"];
-
-    // define a rotation from the dicom data:
-    // according to the dicom spec, the first two columns are orthogonal and of unit length
-    Matrix<3> a;
-
-    a(0,0) = metadata["image_orientation"]["Xx"];
-    a(1,0) = metadata["image_orientation"]["Xy"];
-    a(2,0) = metadata["image_orientation"]["Xz"];
-
-    a(0,1) = metadata["image_orientation"]["Yx"];
-    a(1,1) = metadata["image_orientation"]["Yy"];
-    a(2,1) = metadata["image_orientation"]["Yz"];
-
-    a.col(2) = a.col(0).cross(a.col(1));
-
-    // define a scaling from the dicom data
-    const double dx = metadata["pixel_spacing"]["x"];
-    const double dy = metadata["pixel_spacing"]["y"];
-    const double dz = metadata["slice_thickness"];
-
-    Matrix<3> d = Matrix<3>::Zero();
-    d(0,0) = dx;
-    d(1,1) = dy;
-    d(2,2) = dz * (-1.0); // A hack to match conventions with 3d slicer
-
-    return AffinityIso<3>(a*d, b);
-}
-
-GridIso<3> grid_from_dicom_metadata(const nlohmann::json& dicom_metadata)
-{
-    return GridIso(grid_dimensions_from_dicom_metadata(dicom_metadata), affinity_from_dicom_metadata(dicom_metadata));
-}
 
 // GridType is either Grid<dim_source, dim_target> or GridIso<dim>
 template<typename GridType, typename T>
