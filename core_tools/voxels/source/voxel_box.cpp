@@ -2,21 +2,14 @@
 
 namespace
 {
-
-    // todo: implement this to replace the follwing soon-to-be-depracated version
+    // label is just a short descriptive string that can be displayed when visualizing with certain third party software (such as VisIt)
+    template<typename T>
     void write_velocity_slice_to_vtk(
         const Index<3>& n, 
         const std::vector<Vector<3>>& points, 
         const std::vector<Vector<3>>& velocities, 
         const std::string& label, 
         const std::string& filename)
-    {}
-
-    /*
-    // label is just a short descriptive string that can be displayed when visualizing with certain third party software (such as VisIt)
-    template<typename T>
-    void write_velocity_slice_to_vtk(uint64_t nx, uint64_t ny, uint64_t nz, const std::vector<std::array<double, 3>>& points, 
-    const std::vector<std::array<T, 3>>& velocities, const std::string& label, const std::string& filename)
     {
         std::string vtk_data_type;
         if (typeid(T) == typeid(bool)) vtk_data_type = "bit";
@@ -41,13 +34,13 @@ namespace
         file << "DANWUZHERE" << std::endl;
         file << "ASCII" << std::endl;
         file << "DATASET STRUCTURED_GRID" << std::endl;
-        file << "DIMENSIONS" << " " << nx << " " << ny << " " << nz << std::endl;
-        file << "POINTS" << " " << nx*ny*nz << " " << "float" << std::endl;
+        file << "DIMENSIONS" << " " << n(0) << " " << n(1) << " " << n(2) << std::endl;
+        file << "POINTS" << " " << n(0)*n(1)*n(2) << " " << "float" << std::endl;
 
         for (auto p : points)
             file << p[0] << " " << p[1] << " " << p[2] << std::endl;
 
-        file << "POINT_DATA" << " " << nx*ny*nz << std::endl;
+        file << "POINT_DATA" << " " << n(0)*n(1)*n(2) << std::endl;
         file << "VECTORS" << " " << label << " " << vtk_data_type << std::endl;
 
         for (auto v : velocities)
@@ -55,11 +48,9 @@ namespace
 
         std::cerr << std::endl;
         file.close();
+
     }
-
-    */
 }
-
 
 template<typename GridType, typename T>
 void GridExport::export_to_vtk(const GridWithAttribute<GridType, T>& gwa, const std::string& filename)
@@ -81,5 +72,5 @@ void GridExport::export_to_vtk(const GridWithAttribute<GridIso<3>, Vector<3>>& g
         points.push_back(point);
     }
  
-    write_velocity_slice_to_vtk(gwa.grid.indexer.n, points, gwa.get_attribute(), label, filename);
+    write_velocity_slice_to_vtk<double>(gwa.grid.indexer.n, points, gwa.get_attribute(), label, filename);
 }
