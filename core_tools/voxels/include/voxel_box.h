@@ -64,13 +64,12 @@ struct GridIso
     const AffinityIso<dim> affinity;
 };
 
-
-
 // GridType is either Grid<dim_source, dim_target> or GridIso<dim>
 template<typename GridType, typename T>
 struct GridWithAttribute
 {
-
+    friend void export_to_vtk(const std::string& filename);
+ 
     GridWithAttribute(const GridType& grid_) :  grid(grid_)
     {
     }
@@ -81,9 +80,17 @@ struct GridWithAttribute
         attribute = attribute_;
     }
 
+    private:
+
     const GridType grid;
     std::vector<T> attribute;   // don't ever change the size of this array!
 };
+
+namespace GridExport
+{
+    template<typename GridType, typename T>
+    void export_to_vtk(const GridWithAttribute<GridType, T>& grid, const std::string& filename);
+}
 
 
 #include "voxel_box.hpp"

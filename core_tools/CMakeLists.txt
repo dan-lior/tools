@@ -11,7 +11,7 @@ add_subdirectory(affinities build_affinities)
 target_include_directories(coretools PUBLIC affinities/include/) 
 
 add_subdirectory(voxels build_voxels)
-target_include_directories(coretools PUBLIC voxels/include/) 
+target_link_libraries(coretools voxels) 
 
 add_subdirectory(misc build_misc)
 target_link_libraries(coretools misc)

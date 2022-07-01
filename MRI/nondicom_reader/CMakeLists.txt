@@ -19,6 +19,7 @@ target_include_directories(nondicom_reader PUBLIC "../../core_tools/misc/include
 target_link_libraries(nondicom_reader PUBLIC misc)
 
 
-
+# just for testing...
 add_executable(dummy main.cpp)
 target_link_libraries(dummy nondicom_reader)
+target_link_libraries(dummy voxels)
