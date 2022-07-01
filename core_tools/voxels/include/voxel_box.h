@@ -80,16 +80,22 @@ struct GridWithAttribute
         attribute = attribute_;
     }
 
-    private:
+    std::vector<T> get_attribute() const
+    {
+        return attribute;
+    }
 
     const GridType grid;
+
+    private: 
+    
     std::vector<T> attribute;   // don't ever change the size of this array!
 };
 
 namespace GridExport
 {
     template<typename GridType, typename T>
-    void export_to_vtk(const GridWithAttribute<GridType, T>& grid, const std::string& filename);
+    void export_to_vtk(const GridWithAttribute<GridType, T>& gwa, const std::string& filename);
 }
 
 
