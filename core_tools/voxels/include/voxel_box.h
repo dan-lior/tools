@@ -22,7 +22,6 @@ struct Indexer
     const Index<dim> n;   
 };
 
-
 // Models a grid with arbitrary dimension, in a Euclidean space of arbitrary dimension
 template<uint64_t dim_target, uint64_t dim_source>
 struct Grid
@@ -36,6 +35,20 @@ struct Grid
        return affinity(fractional_index); 
     }
     
+    std::vector<Vector<dim_target>> all_positions() const
+    {
+        std::vector<Vector<dim_target>> rtn;
+        for (uint64_t rank = 0; rank < indexer.num_cells(); rank++)
+        {
+            Index<dim_source> index = indexer.to_index(rank);
+            Vector<dim_source> fractional_index = index_to_vector<dim_source>(index);
+            Vector<dim_target> point = position(fractional_index);
+            rtn.push_back(point);
+        } 
+        return rtn;
+    }
+
+
     const Indexer<dim_source> indexer;
     const Affinity<dim_target, dim_source> affinity;
 };
@@ -44,13 +57,26 @@ struct Grid
 template<uint64_t dim>
 struct GridIso
 {
-    GridIso(const Index<dim>& n, const AffinityIso<dim>& affinity_) : indexer(n), affinity(affinity_) 
+    GridIso(const Index<dim>& n, const AffinityIso<dim>& affinity_ = AffinityIso<dim>()) : indexer(n), affinity(affinity_) 
     {
     }
     
     Vector<dim> position(const Vector<dim>& fractional_index) const
     {
         return affinity(fractional_index);
+    }
+
+    std::vector<Vector<dim>> all_positions() const
+    {
+        std::vector<Vector<dim>> rtn;
+        for (uint64_t rank = 0; rank < indexer.num_cells(); rank++)
+        {
+            Index<dim> index = indexer.to_index(rank);
+            Vector<dim> fractional_index = index_to_vector<dim>(index);
+            Vector<dim> point = position(fractional_index);
+            rtn.push_back(point);
+        } 
+        return rtn;
     }
 
     Vector<dim> fractional_index(const Vector<dim>& position) const
@@ -88,7 +114,7 @@ struct GridWithAttribute
     const GridType grid;
 
     private: 
-    
+
     std::vector<T> attribute;   // don't ever change the size of this array!
 };
 

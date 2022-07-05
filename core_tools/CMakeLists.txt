@@ -33,9 +33,3 @@ target_link_libraries(coretools triangulations)
 
 add_subdirectory(quadrics build_quadrics)
 target_link_libraries(coretools quadrics)
-
-
-#add_executable(hello hello.cpp)
-#target_link_libraries(hello coretools)
-
-

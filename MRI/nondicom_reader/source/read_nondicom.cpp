@@ -163,8 +163,8 @@ std::vector<GridWithAttribute<GridIso<3>, Vector<3>>> read_nondicom(const std::s
     const std::string metadata_filename = nondicom_directory + std::string("metadata.json");
     const nlohmann::json metadata = Miscellaneous::read_metadata(metadata_filename);
 
-    int indent = 4;
-    std::cerr << metadata.dump(indent) << std::endl;
+    // int indent = 4;
+    // std::cerr << metadata.dump(indent) << std::endl;
 
     GridIso<3> grid = grid_from_nondicom_metadata(metadata);
 
