@@ -66,8 +66,6 @@ namespace
         AffinityIso<3> affinity = affinity_from_nondicom_metadata(metadata);
         Matrix<3> linear = affinity.linear_part;
 
-    //        Index<3> grid_dimensions = grid_dimensions_from_nondicom_metadata(metadata);
-
         const uint64_t nx = metadata["width"];
         const uint64_t ny = metadata["height"];
         const uint64_t nz = metadata["depth"];
@@ -162,9 +160,6 @@ std::vector<GridWithAttribute<GridIso<3>, Vector<3>>> read_nondicom(const std::s
 {
     const std::string metadata_filename = nondicom_directory + std::string("metadata.json");
     const nlohmann::json metadata = Miscellaneous::read_metadata(metadata_filename);
-
-    // int indent = 4;
-    // std::cerr << metadata.dump(indent) << std::endl;
 
     GridIso<3> grid = grid_from_nondicom_metadata(metadata);
 

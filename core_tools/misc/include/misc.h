@@ -23,11 +23,6 @@ namespace Miscellaneous
 
     void write_to_file(const std::vector<std::vector<double>>& xss, const std::vector<std::string>& header, const std::string& filename);
 
-    // copied from "map_masked_velocity_to_vtk.cpp", 3/18/2022
-    template<typename T>
-    void write_scalar_slice_to_vtk(uint64_t nx, uint64_t ny, uint64_t nz, const std::vector<std::array<double, 3>>& points, 
-    const std::vector<T>& scalar_data, const std::string& label, const std::string& filename);
-
     bool file_exists(const std::string& filename);
 
     bool directory_exists(const std::string& directory_name);

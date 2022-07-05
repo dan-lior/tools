@@ -48,7 +48,6 @@ struct Grid
         return rtn;
     }
 
-
     const Indexer<dim_source> indexer;
     const Affinity<dim_target, dim_source> affinity;
 };
@@ -120,6 +119,9 @@ struct GridWithAttribute
 
 namespace GridExport
 {
+    // the affinity stored in a grid is automatically applied to the points of the grid (via the position() member function),
+    // the attribute, however, is NOT transformed. 
+
     template<typename GridType, typename T>
     void export_to_vtk(const GridWithAttribute<GridType, T>& gwa, const std::string& filename);
 }
