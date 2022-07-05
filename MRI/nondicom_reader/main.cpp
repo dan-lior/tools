@@ -13,19 +13,23 @@ int main()
     // std::vector<GridWithAttribute<GridIso<3>, Vector<3>>> gwa_timeslices = read_nondicom(nondicom_directory);
     // GridWithAttribute<GridIso<3>, Vector<3>> grid = gwa_timeslices[8];
 
-    const std::string filename("/home/dan/git-repos/tools/MRI/vtk_data/test.vtk");
-    
-
     Index<3> n(2,2,2);
-    std::vector<double> attribute({88,88,88,88,88,88,88,88});
-
     GridIso<3> grid(n);
-    GridWithAttribute<GridIso<3>, double> gwa(grid);
-    gwa.set_attribute(attribute);
 
-    GridExport::export_to_vtk(gwa, filename);
+    GridWithAttribute<GridIso<3>, double> gwsa(grid);
+    GridWithAttribute<GridIso<3>, Vector<3>> gwva(grid);
 
-    assert(Miscellaneous::file_exists(filename));
+    std::vector<double> scalar_attribute({89,90,91,92,93,94,95,96});
+    std::vector<Vector<3>> vector_attribute({
+        Vector<3>(2,3,4), Vector<3>(2,3,4), Vector<3>(2,3,4), Vector<3>(2,3,4), 
+        Vector<3>(2,3,4), Vector<3>(2,0,4), Vector<3>(0,3,4), Vector<3>(2,3,0) 
+        });
+    
+    gwsa.set_attribute(scalar_attribute);
+    gwva.set_attribute(vector_attribute);
+
+    GridExport::export_to_vtk(gwsa, std::string("/home/dan/git-repos/tools/MRI/vtk_data/test_scalar.vtk"));
+    GridExport::export_to_vtk(gwva, std::string("/home/dan/git-repos/tools/MRI/vtk_data/test_vector.vtk"));
 
     std::cerr << "goodbye" << std::endl;
     return 0;
