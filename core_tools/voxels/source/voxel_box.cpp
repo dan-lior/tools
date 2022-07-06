@@ -55,34 +55,26 @@ namespace
 
         file.close();
     }
-
-
-
 }
 
 
-
-
-template<typename GridType, typename T>
-void GridExport::export_to_vtk(const GridWithAttribute<GridType, T>& gwa, const std::string& filename)
+template<uint64_t dim_target, uint64_t dim_source, typename T>
+void LabelledGrid<dim_target, dim_source, T>::export_to_vtk(const std::string& filename)
 {
-    std::cerr << "The function template export_to_vtk is currently only defined when its template parameters are either: " << std::endl;
-    std::cerr << "GridWithAttribute<GridIso<3>, Vector<3> " << std::endl;
-    std::cerr << "or " << std::endl;
-    std::cerr << "GridWithAttribute<GridIso<3>, double " << std::endl;
+    std::cerr << "this is not implemented for dim_target = " << dim_target << " and dim_source = " << dim_source << std::endl;
 }
 
-template <>
-void GridExport::export_to_vtk(const GridWithAttribute<GridIso<3>, double>& gwa, const std::string& filename)
+template<>
+void LabelledGrid<3, 3, double>::export_to_vtk(const std::string& filename)
 {
     const std::string& label("some_scalar_quantity"); 
-    write_scalar_slice_to_vtk(gwa.grid.indexer.n, gwa.grid.all_positions(), gwa.get_attribute(), label, filename);
+    write_scalar_slice_to_vtk(indexer.n, all_positions(), get_labels(), label, filename);
 }
 
-template <>
-void GridExport::export_to_vtk(const GridWithAttribute<GridIso<3>, Vector<3>>& gwa, const std::string& filename)
+template<>
+void LabelledGrid<3, 3, Vector<3>>::export_to_vtk(const std::string& filename)
 {
+    std::cerr << "exporting vector field to vtk" << std::endl;
     const std::string& label("some_vector_quantity"); 
-    write_velocity_slice_to_vtk(gwa.grid.indexer.n, gwa.grid.all_positions(), gwa.get_attribute(), label, filename);
+    write_velocity_slice_to_vtk(indexer.n, all_positions(), get_labels(), label, filename);
 }
-

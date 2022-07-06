@@ -109,9 +109,9 @@ namespace
         return Index<3>(nx,ny,nz);
     }
 
-    GridIso<3> grid_from_nondicom_metadata(const nlohmann::json& nondicom_metadata)
+    Grid<3,3> grid_from_nondicom_metadata(const nlohmann::json& nondicom_metadata)
     {
-        return GridIso<3>(grid_dimensions_from_nondicom_metadata(nondicom_metadata), affinity_from_nondicom_metadata(nondicom_metadata));
+        return Grid<3,3>(grid_dimensions_from_nondicom_metadata(nondicom_metadata), affinity_from_nondicom_metadata(nondicom_metadata));
     }
 
     std::vector<std::vector<Vector<3>> > get_velocity_from_phase_data_in_files(const nlohmann::json& metadata, const std::string& directory_name)
@@ -156,23 +156,20 @@ namespace
     }
 }
 
-std::vector<GridWithAttribute<GridIso<3>, Vector<3>>> read_nondicom(const std::string& nondicom_directory)
+std::vector<LabelledGrid<3, 3, Vector<3>>> read_nondicom(const std::string& nondicom_directory)
 {
     const std::string metadata_filename = nondicom_directory + std::string("metadata.json");
     const nlohmann::json metadata = Miscellaneous::read_metadata(metadata_filename);
 
-    GridIso<3> grid = grid_from_nondicom_metadata(metadata);
+    Grid<3,3> grid = grid_from_nondicom_metadata(metadata);
 
     std::vector<std::vector<Vector<3>> > velocity_timeslices = get_velocity_from_phase_data_in_files(metadata, nondicom_directory);
     assert(velocity_timeslices.size() == metadata["num_timesteps"]);
 
-    std::vector<GridWithAttribute<GridIso<3>, Vector<3>>> rtn;
+    std::vector<LabelledGrid<3, 3, Vector<3>>> rtn;
     for (auto slice : velocity_timeslices)
-    {
-        GridWithAttribute<GridIso<3>, Vector<3>> temp(grid);
-        temp.set_attribute(slice);
-        rtn.push_back(temp);
-    }
+        rtn.push_back(LabelledGrid<3, 3, Vector<3>>(grid, slice));
+
     return rtn;
 }
 

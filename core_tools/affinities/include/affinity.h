@@ -8,6 +8,9 @@
 template<uint64_t dim_target, uint64_t dim_source>
 struct Affinity
 {
+    static constexpr uint64_t target_dimension = dim_target;
+    static constexpr uint64_t source_dimension = dim_source;
+
     Affinity(
         const MatrixRect<dim_target, dim_source>& linear = MatrixRect<dim_target, dim_source>::Identity(), 
         const Vector<dim_target>& translation = Vector<dim_target>::Zero());
@@ -22,31 +25,38 @@ struct Affinity
     // evaluation
     Vector<dim_target> operator()(const Vector<dim_source>& p) const;
 
+    bool isInvertible() const;
+
+    Affinity<dim_source, dim_target> inverse() const;
+
+    static Affinity<dim_target, dim_source> procrustes(const std::vector<Vector<dim_source>>& source, const std::vector<Vector<dim_target>>& target, bool force_special_orthogonal = false)
+    {
+        if (dim_target == dim_source)
+            std::cerr << "not yet implemented" << std::endl;
+        else
+            std::cerr << "not defined" << std::endl;
+
+        return Affinity<dim_target, dim_source>();
+    }
+
+    // return false if and only if no fixed points exist
+    // the set of fixed points have the form particular_fixed_point + linear combo of basis elements
+    bool compute_fixed_points(Vector<dim_target>& particular_fixed_point, std::vector<Vector<dim_target>>& basis) const
+    {
+        assert(dim_target == dim_source);
+
+        std::cerr << "not yet implemented" << std::endl;
+
+        return true;
+    }
+
     MatrixRect<dim_target, dim_source> linear_part;
     Vector<dim_target> translation_part;
 };
 
 
-// models an invertible affine map
-
+// temporary hack ... remove soon
 template<uint64_t dim>
-struct AffinityIso : public Affinity<dim, dim>
-{
-    AffinityIso(const Matrix<dim>& linear = Matrix<dim>::Identity(), const Vector<dim>& translation = Vector<dim>::Zero());
-    AffinityIso(const Affinity<dim, dim>& other);
-
-    static AffinityIso<dim> procrustes(const std::vector<Vector<dim>>& source, const std::vector<Vector<dim>>& target, bool force_special_orthogonal = false);
-    
-    // ensure that the composition of AffinityIso objects is another AffinityIso object
-    AffinityIso<dim> operator*(const AffinityIso<dim>& other) const;
-
-    AffinityIso<dim> inverse() const;
-
-    // todo: implement this
-    // return false if and only if no fixed points exist
-    // the set of fixed points have the form particular_fixed_point + linear combo of basis elements
-    bool fixed_points(Vector<dim>& particular_fixed_point, std::vector<Vector<dim>>& basis) const;
-};
-
+using AffinityIso = Affinity<dim, dim>;
 
 #include "affinity.hpp"

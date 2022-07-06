@@ -349,23 +349,23 @@ namespace
 
     }
 
-    AffinityIso<3> Polyline::register_icp(const Polyline& fixed, const Polyline& floating, double convergence_tolerance, uint64_t max_iterations, bool vanilla)
-    {
-        AffinityIso<3> A; // identity
-        for (uint64_t i = 0; i < max_iterations; ++i)
-        {
-            AffinityIso<3> A0 = single_icp_iterate(fixed, floating.transform(A), vanilla);            
-            const double norm_A0 = (A0.single_matrix_representation() - Matrix<4>::Identity()).norm();
-            std::cerr << "norm A0: " << norm_A0 << std::endl;
+    // AffinityIso<3> Polyline::register_icp(const Polyline& fixed, const Polyline& floating, double convergence_tolerance, uint64_t max_iterations, bool vanilla)
+    // {
+    //     AffinityIso<3> A; // identity
+    //     for (uint64_t i = 0; i < max_iterations; ++i)
+    //     {
+    //         AffinityIso<3> A0 = single_icp_iterate(fixed, floating.transform(A), vanilla);            
+    //         const double norm_A0 = (A0.single_matrix_representation() - Matrix<4>::Identity()).norm();
+    //         std::cerr << "norm A0: " << norm_A0 << std::endl;
             
-            A = A0*A;
-            if (norm_A0 < convergence_tolerance)
-            {
-                std::cerr << "icp converged" << std::endl;
-                return A;
-            }
-        }
+    //         A = A0*A;
+    //         if (norm_A0 < convergence_tolerance)
+    //         {
+    //             std::cerr << "icp converged" << std::endl;
+    //             return A;
+    //         }
+    //     }
 
-        std::cerr << "icp failed to converge" << std::endl;
-        return A;
-    }
+    //     std::cerr << "icp failed to converge" << std::endl;
+    //     return A;
+    // }

@@ -7,6 +7,11 @@ Affinity<dim_target, dim_source>::Affinity(const MatrixRect<dim_target, dim_sour
 {
 }
 
+template<uint64_t dim_target, uint64_t dim_source>
+bool Affinity<dim_target, dim_source>::isInvertible() const
+{
+    return (dim_target == dim_source) && linear_part.determinant() != 0;
+}
 
 template<uint64_t dim_target, uint64_t dim_source>
 MatrixRect<1+dim_target, 1+dim_source> Affinity<dim_target, dim_source>::single_matrix_representation() const
@@ -34,36 +39,14 @@ Affinity<dim_target, dim_presource> Affinity<dim_target, dim_source>::operator*(
     return Affinity<dim_target, dim_presource>(linear, trans);
 }
 
-
-
-template<uint64_t dim>
-AffinityIso<dim>::AffinityIso(const Matrix<dim>& linear, const Vector<dim>& translation) : 
-    Affinity<dim, dim>(linear, translation)
+template<uint64_t dim_target, uint64_t dim_source>
+Affinity<dim_source, dim_target> Affinity<dim_target, dim_source>::inverse() const
 {
-    assert(linear.determinant() != 0);
+    assert(isInvertible());
+
+    auto l = linear_part.inverse();
+    auto t = -l*translation_part;
+    return Affinity<dim_source, dim_target>(l,t);
 }
 
-
-template<uint64_t dim>
-AffinityIso<dim> procrustes(const std::vector<Vector<dim>>& source, const std::vector<Vector<dim>>& target, bool force_special_orthogonal = false);
-
-
-template<uint64_t dim>
-AffinityIso<dim>::AffinityIso(const Affinity<dim, dim>& other) : AffinityIso(other.linear_part, other.translation_part)
-{}
-
-template<uint64_t dim>
-AffinityIso<dim> AffinityIso<dim>::operator*(const AffinityIso<dim>& other) const
-{
-    return AffinityIso<dim>((*this)*other);
-}
-
-
-template<uint64_t dim>
-AffinityIso<dim> AffinityIso<dim>::inverse() const
-{
-    auto linear = Affinity<dim, dim>::linear_part.inverse();
-    auto translation = -linear*(Affinity<dim, dim>::translation_part);
-    return AffinityIso<dim>(linear, translation);
-}
 
