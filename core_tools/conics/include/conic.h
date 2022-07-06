@@ -20,7 +20,7 @@
 
         Conic transform(const Matrix<3>& B) const;
 
-        AffinityIso<2> axis_align() const;
+        Affinity<2,2> axis_align() const;
 
         bool isAxisAligned(const double tolerance) const;
 

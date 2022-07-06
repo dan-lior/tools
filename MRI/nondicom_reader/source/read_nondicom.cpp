@@ -6,7 +6,7 @@
 
 namespace
 {
-    AffinityIso<3> affinity_from_nondicom_metadata(const nlohmann::json& nondicom_metadata)
+    Affinity<3,3> affinity_from_nondicom_metadata(const nlohmann::json& nondicom_metadata)
     {
         // define a translation from the dicom data:
         Vector<3> b;
@@ -38,7 +38,7 @@ namespace
         d(1,1) = dy;
         d(2,2) = dz * (-1.0); // A hack to match conventions with 3d slicer
 
-        return AffinityIso<3>(a*d, b);
+        return Affinity<3,3>(a*d, b);
     }
 
     template <typename T>
@@ -63,7 +63,7 @@ namespace
     template <typename T>
     std::vector<Vector<3>> compute_velocities(const nlohmann::json& metadata, std::vector<T>& phasex, std::vector<T>& phasey, std::vector<T>& phasez)
     {
-        AffinityIso<3> affinity = affinity_from_nondicom_metadata(metadata);
+        Affinity<3,3> affinity = affinity_from_nondicom_metadata(metadata);
         Matrix<3> linear = affinity.linear_part;
 
         const uint64_t nx = metadata["width"];

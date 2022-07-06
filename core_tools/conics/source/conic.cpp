@@ -109,7 +109,7 @@ void Conic::write_sampled_ellipse_to_vtk_file(const Conic& conic, const std::str
         exit(1);
     }
 
-    AffinityIso<2> aligning_transformation = conic.axis_align();
+    Affinity<2,2> aligning_transformation = conic.axis_align();
 
     Conic aligned_conic = conic.transform(aligning_transformation.single_matrix_representation());
 
@@ -150,7 +150,7 @@ void Conic::write_sampled_ellipse_to_vtk_file(const Conic& conic, const std::str
 
     // sample points along the axis aligned conic and then undo the aligning transformation
 
-    AffinityIso<2> undo_aligning_transformation = aligning_transformation.inverse();
+    Affinity<2,2> undo_aligning_transformation = aligning_transformation.inverse();
 
     std::vector<Vector<2>> samples;
     const double dtheta = 2*M_PI / num_points;
@@ -169,7 +169,7 @@ void Conic::write_sampled_ellipse_to_vtk_file(const Conic& conic, const std::str
     Miscellaneous::write_points_to_vtk_file<2>(samples, filename, true);
 }
 
-AffinityIso<2> Conic::axis_align() const
+Affinity<2,2> Conic::axis_align() const
 {
     Matrix<3> H;
     get_coefficients(H);
@@ -189,7 +189,7 @@ AffinityIso<2> Conic::axis_align() const
     if (!(V*H0*x).isApprox(-V*b))
         std::cerr << "failed to find axis aligning transformation for the conic" << std::endl;
 
-    return AffinityIso<2>(V, x);
+    return Affinity<2,2>(V, x);
 }
 
 bool Conic::isAxisAligned(const double tolerance) const
@@ -208,7 +208,7 @@ std::array<double, 2> Conic::semimajor_and_semiminor_axes() const
 {
     assert(!classification.is_degenerate());
     
-    AffinityIso<2> aligning_transformation = axis_align();
+    Affinity<2,2> aligning_transformation = axis_align();
     Conic conic0 = transform(aligning_transformation.single_matrix_representation());
 
     double a1 = sqrt(std::max<double>(1/fabs(conic0.a), 1/fabs(conic0.c)));

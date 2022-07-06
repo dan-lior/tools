@@ -15,7 +15,7 @@ namespace
     }
 
     // returns a transformation that best aligns floating with fixed
-    AffinityIso<3> single_icp_iterate(const Polyline& fixed, const Polyline& floating, bool vanilla)
+    Affinity<3,3> single_icp_iterate(const Polyline& fixed, const Polyline& floating, bool vanilla)
     {
         std::vector<Vector<3>> targets;
 
@@ -32,7 +32,7 @@ namespace
                 targets.push_back(MiscellaneousMath::projection_to_line<3>(fixed.vertices[i], fixed.tangent_directions[i], q));
             }
 
-        return AffinityIso<3>::procrustes(floating.vertices, targets);
+        return Affinity<3,3>::procrustes(floating.vertices, targets);
     }
 
     // returns the angle between (p2-p1) and (p3-p2)
@@ -330,7 +330,7 @@ namespace
         return torsion;
     }
 
-    Polyline Polyline::transform(const AffinityIso<3>& affinity) const
+    Polyline Polyline::transform(const Affinity<3,3>& affinity) const
     {
         std::vector<Vector<3>> vertices_transformed;
         for (auto v : vertices)
@@ -349,12 +349,12 @@ namespace
 
     }
 
-    // AffinityIso<3> Polyline::register_icp(const Polyline& fixed, const Polyline& floating, double convergence_tolerance, uint64_t max_iterations, bool vanilla)
+    // Affinity<3,3> Polyline::register_icp(const Polyline& fixed, const Polyline& floating, double convergence_tolerance, uint64_t max_iterations, bool vanilla)
     // {
-    //     AffinityIso<3> A; // identity
+    //     Affinity<3,3> A; // identity
     //     for (uint64_t i = 0; i < max_iterations; ++i)
     //     {
-    //         AffinityIso<3> A0 = single_icp_iterate(fixed, floating.transform(A), vanilla);            
+    //         Affinity<3,3> A0 = single_icp_iterate(fixed, floating.transform(A), vanilla);            
     //         const double norm_A0 = (A0.single_matrix_representation() - Matrix<4>::Identity()).norm();
     //         std::cerr << "norm A0: " << norm_A0 << std::endl;
             

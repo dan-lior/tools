@@ -17,7 +17,7 @@
         Triangulation();
         Triangulation(const std::vector<Vector<3>>& vertices, const std::vector<Index<3>>& triangles, const std::vector<Vector<3>>& normals);
 
-        Triangulation transform(const AffinityIso<3>& affinity) const;
+        Triangulation transform(const Affinity<3,3>& affinity) const;
 
         Triangulation extract_subtriangulation(const std::vector<uint64_t>& vertex_indices, uint64_t mode) const;
 

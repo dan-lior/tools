@@ -104,7 +104,7 @@ Triangulation::Triangulation(const std::vector<Vector<3>>& vertices_, const std:
     vertices(vertices_), triangles(triangles_), normals(normals_)
     {}
 
-Triangulation Triangulation::transform(const AffinityIso<3>& A) const
+Triangulation Triangulation::transform(const Affinity<3,3>& A) const
 {
     std::vector<Vector<3>> vertices_transformed;
     for (auto v:vertices)

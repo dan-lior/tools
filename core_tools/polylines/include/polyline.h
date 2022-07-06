@@ -25,7 +25,7 @@ struct Polyline
 
     Polyline reset_smoothing_radius(uint64_t new_smoothing_radius) const;
 
-    Polyline transform(const AffinityIso<3>& affinity) const;
+    Polyline transform(const Affinity<3,3>& affinity) const;
 
     Polyline gaussian_perturbation(double mu, double sigma) const;
 
@@ -33,7 +33,7 @@ struct Polyline
 
     void write_to_file(const std::string& filename) const;
 
-    static AffinityIso<3> register_icp(const Polyline& fixed, const Polyline& floating, double convergence_tolerance, uint64_t max_iterations, bool vanilla);
+    static Affinity<3,3> register_icp(const Polyline& fixed, const Polyline& floating, double convergence_tolerance, uint64_t max_iterations, bool vanilla);
 
     std::vector<Vector<3>> vertices;
     std::vector<Vector<3>> tangent_directions;

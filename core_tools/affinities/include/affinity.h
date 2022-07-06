@@ -54,9 +54,4 @@ struct Affinity
     Vector<dim_target> translation_part;
 };
 
-
-// temporary hack ... remove soon
-template<uint64_t dim>
-using AffinityIso = Affinity<dim, dim>;
-
 #include "affinity.hpp"

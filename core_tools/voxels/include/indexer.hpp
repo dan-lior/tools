@@ -1,6 +1,5 @@
 #include "misc_math.h"
 
-
 template<uint64_t dim>
 Indexer<dim>::Indexer(const Index<dim>& n_) : n(n_) {}
 
