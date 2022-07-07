@@ -2,6 +2,11 @@ project(nondicom_reader)
 cmake_minimum_required(VERSION 3.16)
 set (CMAKE_CXX_STANDARD 17)
 
+set (CMAKE_BUILD_TYPE Debug)
+#set (CMAKE_BUILD_TYPE Release)
+#set (CMAKE_CXX_FLAGS "-Wall")
+#set (CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -Wunused")
+
 add_subdirectory(../../core_tools build_core_tools)
 
 add_library(nondicom_reader source/read_nondicom.cpp)

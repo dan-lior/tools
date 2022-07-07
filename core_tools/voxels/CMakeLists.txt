@@ -11,5 +11,3 @@ target_include_directories(voxels PUBLIC "../../../eigen-3.4.0/")
 target_link_libraries(voxels affinities)
 target_link_libraries(voxels misc_math)
 
-# target_link_libraries(polylines misc)
-
