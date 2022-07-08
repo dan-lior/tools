@@ -110,22 +110,57 @@ int main()
     // }
 
     // test slicing
-    auto velocity_cube = velocity_timeslices[0];
+    auto cube = velocity_timeslices[0];
+    cube.labels = std::vector<Vector<3>>(cube.indexer.num_cells(), Vector<3>());
+    
+    const Vector<3> position_of_center_voxel = cube.position(index_to_vector<3>(cube.indexer.n / 2));
 
-    // Vector<3> fractional_index_of_center_voxel = index_to_vector<3>(velocity_cube.indexer.n / 2);
-    // Vector<3> position_of_center_voxel = velocity_cube.position(fractional_index_of_center_voxel);
-	const Affinity<3,2> sampling_plane(MatrixRect<3,2>(), Vector<3>(30,50,70));
+    const MatrixRect<3,2> xy_plane = MatrixRect<3,2>::Identity();
+    const Affinity<3,2> affinity(xy_plane, Vector<3>(0,0,position_of_center_voxel(2)));
+    const Index<2> n(200,200);
+    const Grid<3,2> slice(n, affinity);
 
-	const uint64_t nx = 100;
-	const uint64_t ny = 200;
-	const Index<2> n({nx,ny});
-	Grid<3,2> probe(n, sampling_plane);
+    auto rank_map = slice.rank_map(cube);
 
-    LabelledGrid<3, 3, Vector<3>> slice = velocity_cube.clear_labels_outside_probe(probe);
+    for (auto iter = rank_map.begin(); iter != rank_map.end(); ++iter)
+    {
+        uint64_t other_rank = iter->second;
+        cube.labels[other_rank] = 888*Vector<3>(1,0,0);
+    }
+
+//     for (uint64_t rank = 0; rank<cube.indexer.num_cells(); ++rank)
+//     {
+//         Index<3> index = cube.indexer.to_index(rank);
+//         uint64_t ix = index(0);
+//         uint64_t iy = index(1);
+//         uint64_t iz = index(2);
+
+//         Vector<3> fractional_index = index_to_vector<3>(index) + Vector<3>(0.5, 0.5, 0.5);
+//         Vector<3> pos = cube.position(fractional_index);
+//         double x = pos(0);
+//         double y = pos(1);
+//         double z = pos(2);
+
+// //        if (nx/2 < ix && ix < nx/2+5)
+//         if (-2 < y && y < 2)
+//             cube.labels[rank] = 88*Vector<3>(1,0,0);
+//         else
+//             cube.labels[rank] = 0*Vector<3>(1,0,0);
+//     }
+
+	// const Affinity<3,2> sampling_plane(MatrixRect<3,2>(), Vector<3>(30,50,70));
+
+	// const uint64_t nx = 100;
+	// const uint64_t ny = 200;
+	// const Index<2> n({nx,ny});
+	// Grid<3,2> probe(n, sampling_plane);
+
+    // LabelledGrid<3, 3, Vector<3>> slice = velocity_cube.clear_labels_outside_probe(probe);
 
     std::string slice_filename(vtk_slice_directory + std::string("slice.vtk"));
 
-    export_labelled_grid_to_vtk(slice, slice_filename);
+    // export_labelled_grid_to_vtk(slice, slice_filename);
+    export_labelled_grid_to_vtk(cube, slice_filename);
 
     return 0;
 }

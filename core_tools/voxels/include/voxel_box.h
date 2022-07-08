@@ -16,6 +16,28 @@ struct Grid
 
     Vector<dim_source> fractional_index(const Vector<dim_target>& position) const;
 
+    // other grid must have an invertible affinity
+    // for each rank r, find the other rank s (if any) so that the center of voxel r is contained in voxel s
+    // note: the resulting map is generally not surjective nor injective
+    std::map<uint64_t, uint64_t> rank_map(const Grid<dim_target, dim_target>& other) const
+    {
+        assert(other.affinity.isInvertible());
+
+        std::map<uint64_t, uint64_t> rtn;
+        for (uint64_t rank = 0; rank < indexer.num_cells(); ++rank)
+        {
+            Index<dim_source> index = indexer.to_index(rank);
+            Vector<dim_source> fractional_index = index_to_vector<dim_source>(index) + 0.5 * Vector<dim_source>::Ones();
+            Vector<dim_target> pos = position(fractional_index);
+            Vector<dim_target> fractional_index_other = other.fractional_index(pos); // this step needs invertibility
+            Index<dim_target> index_other = vector_to_index<dim_target>(fractional_index_other);
+
+            if (!other.indexer.out_of_range(index_other))
+                rtn[rank] = other.indexer.to_rank(index_other);
+        }
+        return rtn;
+    }
+
     const Indexer<dim_source> indexer;
     const Affinity<dim_target, dim_source> affinity;
 };
@@ -35,9 +57,10 @@ struct LabelledGrid : public Grid<dim_target, dim_source>
     template<uint64_t dim_source_probe>
     LabelledGrid<dim_target, dim_source, T> clear_labels_outside_probe(const Grid<dim_target, dim_source_probe>& probe) const;
 
-    private: 
+    // private: 
+    // const std::vector<T> labels;
 
-    const std::vector<T> labels;
+    std::vector<T> labels;
 };
 
 
