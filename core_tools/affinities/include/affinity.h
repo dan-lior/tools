@@ -1,7 +1,7 @@
 #pragma once
 
 #include "common_defs.h"
-
+#include "misc_math.h"
 
 // models an affine map: x --> Ax + b
 
@@ -49,6 +49,56 @@ struct Affinity
 
         return true;
     }
+
+    static Affinity<dim_target, dim_source> procrustes(const std::vector<Vector<dim_source>>& source, const std::vector<Vector<dim_target>>& target)
+    {
+        static_assert(dim_target = dim_source, "procrustes only implemented for equal template parameters");
+        constexpr uint64_t dim = dim_target;
+
+        assert(!source.empty());
+        assert(source.size() == target.size());
+        const uint64_t n = source.size();
+
+        const Vector<dim> centroid_source = MiscellaneousMath::centroid<dim>(source);
+        const Vector<dim> centroid_target = MiscellaneousMath::centroid<dim>(target);
+            
+        Eigen::MatrixXd A(dim, n);
+        Eigen::MatrixXd B(dim, n);
+        for (uint64_t i=0; i<n; ++i)
+        {
+            A.col(i) = source[i] - centroid_source;
+            B.col(i) = target[i] - centroid_target;
+        }
+
+        Eigen::MatrixXd M = A*B.transpose();
+
+    //    Eigen::JacobiSVD<Eigen::MatrixXd, Eigen::ComputeThinU | Eigen::ComputeThinV> svd(M);
+        Eigen::JacobiSVD<Eigen::MatrixXd> svd(M, Eigen::ComputeThinU | Eigen::ComputeThinV);
+
+        Eigen::MatrixXd U = svd.matrixU();
+        Eigen::MatrixXd V = svd.matrixV();
+
+        Matrix<dim> R = V*U.transpose();
+
+        // to force special orthogonal (ie det =1 and not det = -1)
+        // if (R.determinant() < 0)
+        // {
+        //     std::cerr << "R.determinant(): " << R.determinant()<< std::endl;
+        //     Matrix<dim> flip = Matrix<dim>::Identity();
+        //     flip(dim-1, dim-1) = -1; 
+        //     R = V * flip * U.transpose();
+        //     std::cerr << "R.determinant(): " << R.determinant()<< std::endl;
+        // }
+
+        Affinity<dim, dim> AffinityIso1(Matrix<dim>::Identity(), -centroid_source);
+        Affinity<dim, dim> AffinityIso2(R, Vector<dim>::Zero());
+        Affinity<dim, dim> AffinityIso3(Matrix<dim>::Identity(), centroid_target);
+
+        return AffinityIso3 * AffinityIso2 * AffinityIso1;
+    }
+
+
+
 
     MatrixRect<dim_target, dim_source> linear_part;
     Vector<dim_target> translation_part;

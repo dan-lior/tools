@@ -32,7 +32,9 @@ namespace
                 targets.push_back(MiscellaneousMath::projection_to_line<3>(fixed.vertices[i], fixed.tangent_directions[i], q));
             }
 
-        return Affinity<3,3>::procrustes(floating.vertices, targets);
+        // todo: fix this
+        //return Affinity<3,3>::procrustes(floating.vertices, targets);
+        return Affinity<3,3>();
     }
 
     // returns the angle between (p2-p1) and (p3-p2)
