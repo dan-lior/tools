@@ -123,11 +123,9 @@ namespace
         Grid<3, 3> thickened_grid(n2, Affinity<3,3>(A2,b));
         LabelledGrid<3,3, Vector<3>> labelled_thickened_grid(thickened_grid, labelled_grid.get_labels());
 
-        std::cerr << "exporting scalar data" << std::endl;
+        std::cerr << "exporting vector data" << std::endl;
         write_vector_slice_to_vtk(labelled_thickened_grid.indexer.n, labelled_thickened_grid.all_positions(), labelled_thickened_grid.get_labels(), "some_vector_quantity", filename);
     }
-
-
 
     template<>
     void export_labelled_grid_to_vtk(LabelledGrid<3, 3, double> labelled_grid, const std::string& filename)
@@ -142,13 +140,34 @@ namespace
         std::cerr << "exporting vector data" << std::endl;
         write_vector_slice_to_vtk(labelled_grid.indexer.n, labelled_grid.all_positions(), labelled_grid.get_labels(), "some_vector_quantity", filename);
     }
+
+    Grid<3,2> generate_slice_from_cube_demo(const Grid<3,3>& cube)
+    {
+        const Index<3> n = cube.indexer.n;
+        const Affinity<3,3> dicom_transformation = cube.affinity;
+
+        const Vector<3> position_of_origin = cube.position(index_to_vector<3>(Index<3>(0,0,0)));
+        const Vector<3> position_of_antiorigin = cube.position(index_to_vector<3>(n - Index<3>(1,1,1)));
+        const Vector<3> position_of_center = 0.5*(position_of_origin + position_of_antiorigin);
+
+
+        const Affinity<3,3> rotation_through_origin(MiscellaneousMath::rotation(Vector<3>(1,0,0), M_PI/6));
+        const Affinity<3,3> translation(Matrix<3>::Identity(), position_of_center);
+    //    const Affinity<3,3> rotation = (translation.operator*<3>(rotation_through_origin)).operator*<3>(translation.inverse());
+        const Affinity<3,3> rotation = rotation_through_origin;
+
+        const Affinity<3,2> slice_transformation = (rotation.operator*<3>(dicom_transformation)).operator*<2>(Affinity<3,2>());
+        
+        const Grid<3,2> slice(Index<2>(n(0), n(1)), slice_transformation);
+
+        return slice;
+    }
+
 }
 
 
 int main()
 {
-    // converts nondicom timeslices to vtk timeslices
-
     const std::string nondicom_directory("/home/dan/git-repos/tools/MRI/nondicom_data/patient2/");
     const std::string vtk_directory("/home/dan/git-repos/tools/MRI/vtk_data/patient2/");
     const std::string vtk_slice_directory = vtk_directory + std::string("slices/");
@@ -159,76 +178,33 @@ int main()
 
     std::vector<LabelledGrid<3, 3, Vector<3>>> velocity_timeslices = read_nondicom(nondicom_directory);
 
-    // for (uint64_t i=0; i<velocity_timeslices.size(); ++i)
-    // {
-    //     std::string filename(vtk_directory + std::to_string(i) + std::string(".vtk"));
-    //     std::cerr << "about to export timeslice " << i << std::endl;
-    //     velocity_timeslices[i].export_to_vtk(filename);
-    //     std::cerr << "finished exporting timeslice " << i  << std::endl;
-    // }
+    // choose a single timeslice from which to determine geometry for the space slice
 
-    LabelledGrid<3,3, Vector<3>> labelled_cube = velocity_timeslices[0];
+    Grid<3,2> slice = generate_slice_from_cube_demo(velocity_timeslices[0]);
 
-
-    // MatrixRect<3,3> A;
-    // A = MatrixRect<3,3>::Identity();
-    // A(0,0) = 0.866;
-    // A(0,1) = 0.002;
-    // A(0,2) = 1.98;
-    // A(1,0) = 1.8;
-    // A(1,1) = -0.001;
-    // A(1,2) = -0.95;
-    // A(2,0) = 0;
-    // A(2,1) = -2;
-    // A(2,2) = 0.002;
-    // Vector<3> b;
-    // b(0) = -78.5;
-    // b(1) = -48.5;
-    // b(2) = 187.0;
-    const Index<3> n = labelled_cube.indexer.n;
-    const Affinity<3,3> dicom_transformation = labelled_cube.affinity;
-    //const Affinity<3,3> dicom_transformation = Affinity<3,3>(A,b);
-    // Grid<3,3> cube(n, dicom_transformation);
-
-
-
-    typedef Vector<3> LabelType;
-    // const LabelType default_value = 888.8;
-
-    // LabelledGrid<3,3, LabelType> labelled_cube(cube, std::vector<LabelType>(cube.indexer.num_cells(), default_value));
-
-    const Vector<3> position_of_origin = labelled_cube.position(index_to_vector<3>(Index<3>(0,0,0)));
-    const Vector<3> position_of_antiorigin = labelled_cube.position(index_to_vector<3>(n - Index<3>(1,1,1)));
-    const Vector<3> position_of_center = 0.5*(position_of_origin + position_of_antiorigin);
-
-    std::cerr << "position_of_origin: \t" <<  position_of_origin.transpose() << std::endl;
-    std::cerr << "position_of_antiorigin: \t" <<  position_of_antiorigin.transpose() << std::endl;
-    std::cerr << "position_of_center: \t" <<  position_of_center.transpose() << std::endl;
-
-    const Affinity<3,3> rotation_through_origin(MiscellaneousMath::rotation(Vector<3>(1,0,0), M_PI/6));
-    const Affinity<3,3> translation(Matrix<3>::Identity(), position_of_center);
-//    const Affinity<3,3> rotation = (translation.operator*<3>(rotation_through_origin)).operator*<3>(translation.inverse());
-    const Affinity<3,3> rotation = rotation_through_origin;
-
-    const Affinity<3,2> slice_transformation = (rotation.operator*<3>(dicom_transformation)).operator*<2>(Affinity<3,2>());
-    
-    const Grid<3,2> slice(Index<2>(n(0), n(1)), slice_transformation);
-    
-
-    auto rank_map = slice.rank_map(labelled_cube);
+    auto rank_map = slice.rank_map(velocity_timeslices[0]);
 
     assert(!rank_map.empty());
 
-    std::vector<LabelType> labels(slice.indexer.num_cells(), LabelType());
-    for (auto iter = rank_map.begin(); iter != rank_map.end(); ++iter)
-        labels[iter->first] = -1*labelled_cube.labels[iter->second];
+    // use the rank map to generate space slice slices for each time slice
+    // export both the cube and the slice to vtk file
 
-    LabelledGrid<3,2, LabelType> labelled_slice(slice, labels);
+    for (uint64_t i=0; i<velocity_timeslices.size(); ++i)
+    {
+        LabelledGrid<3,3, Vector<3>> labelled_cube = velocity_timeslices[i];
 
+        auto cube_labels = labelled_cube.get_labels();
 
-    export_labelled_grid_to_vtk(labelled_cube, vtk_slice_directory + std::string("cube.vtk"));
-    export_labelled_grid_to_vtk(labelled_slice, vtk_slice_directory + std::string("slice.vtk"));
+        std::vector<Vector<3>> labels(slice.indexer.num_cells(), Vector<3>());
+        for (auto iter = rank_map.begin(); iter != rank_map.end(); ++iter)
+            labels[iter->first] = cube_labels[iter->second];
+        LabelledGrid<3,2, Vector<3>> labelled_slice(slice, labels);
 
+        export_labelled_grid_to_vtk(labelled_cube, vtk_directory + std::to_string(i) + std::string(".vtk"));
+        export_labelled_grid_to_vtk(labelled_slice, vtk_slice_directory + std::to_string(i) + std::string(".vtk"));
+
+        std::cerr << "finished timeslice " << i << " of " << velocity_timeslices.size() << std::endl;
+    }
 
     return 0;
 }
