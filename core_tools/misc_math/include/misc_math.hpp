@@ -89,6 +89,7 @@ std::vector<std::vector<T>> MiscellaneousMath::cartesian_product(const std::vect
 template<uint64_t dim>
 Eigen::Matrix<double, dim-1, dim> MiscellaneousMath::projection_matrix(const Vector<dim>& normal)
 {
+    static_assert(dim > 0, "logic error");
     assert(normal.norm() != 0);
 
     Eigen::JacobiSVD<Vector<dim>> svd(normal, Eigen::ComputeFullU | Eigen::ComputeFullV);

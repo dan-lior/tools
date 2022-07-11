@@ -17,8 +17,9 @@ struct Grid
     Vector<dim_source> fractional_index(const Vector<dim_target>& position) const;
 
     // other grid must have an invertible affinity
-    // for each rank r, find the other rank s (if any) so that the center of voxel r is contained in voxel s
-    // note: the resulting map is generally not surjective nor injective
+    // returns an associative map (generally not 1-1 nor onto)
+    // (r,s) is in the map if center of voxel r is inside voxel s
+    
     std::map<uint64_t, uint64_t> rank_map(const Grid<dim_target, dim_target>& other) const
     {
         assert(other.affinity.isInvertible());

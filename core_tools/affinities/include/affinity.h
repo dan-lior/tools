@@ -18,9 +18,10 @@ struct Affinity
     // eg, for dim_source=2, this matrix acts on a vector of the form [x y 1]^t
     MatrixRect<1+dim_target, 1+dim_source> single_matrix_representation() const;
 
+
     // composition (A*B)(x) := A(B(x))
     template<uint64_t dim_presource>
-    Affinity<dim_target, dim_presource> operator*(const Affinity<dim_target, dim_source>& other) const;
+    Affinity<dim_target, dim_presource> operator*(const Affinity<dim_source, dim_presource>& other) const;
 
     // evaluation
     Vector<dim_target> operator()(const Vector<dim_source>& p) const;

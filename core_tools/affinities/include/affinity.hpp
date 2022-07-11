@@ -30,9 +30,12 @@ Vector<dim_target> Affinity<dim_target, dim_source>::operator()(const Vector<dim
     return linear_part*p + translation_part;
 }
 
+
+
+
 template<uint64_t dim_target, uint64_t dim_source>
 template<uint64_t dim_presource>
-Affinity<dim_target, dim_presource> Affinity<dim_target, dim_source>::operator*(const Affinity<dim_target, dim_source>& other) const
+Affinity<dim_target, dim_presource> Affinity<dim_target, dim_source>::operator*(const Affinity<dim_source, dim_presource>& other) const
 {
     auto linear = linear_part*other.linear_part;
     auto trans = linear_part*other.translation_part + translation_part;

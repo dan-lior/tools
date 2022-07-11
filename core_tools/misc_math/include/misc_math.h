@@ -2,11 +2,8 @@
 
 #include "common_defs.h"
 
-
 namespace MiscellaneousMath
 {
-
-    Matrix<3> rotation(const Vector<3>& axis, double angle_in_radians);
 
     template <uint64_t dim>
     Vector<dim> gaussian_vector(double mu, double sigma);
@@ -27,7 +24,9 @@ namespace MiscellaneousMath
 
     // returns a matrix that projects to the hyperplane perpendicular to n
     template<uint64_t dim>
-    Eigen::Matrix<double, dim-1, dim> projection_matrix(const Vector<dim>& normal);
+    MatrixRect<dim-1, dim> projection_matrix(const Vector<dim>& normal);
+
+    Matrix<3> rotation(const Vector<3>& axis, double angle_in_radians);
 
     double sample_variance(const std::vector<double>& xs);
 
