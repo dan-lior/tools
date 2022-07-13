@@ -1,5 +1,6 @@
 #include "polyline.h"
 #include "misc.h"
+#include "misc_math.h"
 
 namespace
 {

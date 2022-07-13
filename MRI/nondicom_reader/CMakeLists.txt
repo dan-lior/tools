@@ -26,5 +26,6 @@ target_link_libraries(nondicom_reader PUBLIC misc)
 
 # just for testing...
 add_executable(dummy main.cpp)
-target_link_libraries(dummy nondicom_reader)
-target_link_libraries(dummy voxels)
+target_link_libraries(dummy PUBLIC nondicom_reader)
+target_link_libraries(dummy PUBLIC voxels)
+target_link_libraries(dummy PUBLIC misc)

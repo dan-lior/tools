@@ -1,4 +1,47 @@
 
+
+template<typename T>
+void Miscellaneous::read_file(std::vector<T>& store, const std::string& filename, uint64_t expected_number_of_elements)
+{
+	std::ifstream in(filename, std::ios::binary);
+	if (!in)
+	{
+		std::cerr << "file error" << std::endl;
+		return;
+	}
+
+	in.unsetf(std::ios::skipws); // stop eating new lines in binary mode!
+
+	// get size:
+	std::streampos file_size;
+	in.seekg(0, std::ios::end);
+	auto file_size_in_bytes = in.tellg();
+	in.seekg(0, std::ios::beg);
+
+	const uint64_t expected_size_in_bytes = expected_number_of_elements * sizeof(T);
+	if (static_cast<uint64_t>(file_size_in_bytes) != expected_size_in_bytes)
+	{
+		std::cerr << "file error: " << std::endl;
+		std::cerr << "read: " << file_size_in_bytes << " bytes, but expected to read " << expected_size_in_bytes << " bytes." << std::endl;
+		return;
+	}
+
+	// reserve capacity 
+	store.resize(expected_number_of_elements);
+
+	// read the data
+	in.read((char*) &store[0], expected_size_in_bytes);
+	if (static_cast<uint64_t>(in.gcount()) != expected_size_in_bytes)
+	{
+		std::cerr << "file error: " << std::endl;
+		std::cerr << "bytes read: " << in.gcount() << std::endl;
+		std::cerr << "expected size in bytes: " << expected_size_in_bytes << std::endl;
+		return;
+	}
+
+	in.close();
+}
+
 template<uint64_t dim>
 void Miscellaneous::write_points_to_vtk_file(const std::vector<Vector<dim>>& vertices, const std::string& filename_vtk, bool connect_the_dots)
 {
@@ -127,47 +170,5 @@ std::vector<Vector<dim>> Miscellaneous::read_points_from_vtk_file(const std::str
     file.close();
 
     return vertices;
-}
-
-template<typename T>
-void read_file(std::vector<T>& store, const std::string& filename, uint64_t expected_number_of_elements)
-{
-	std::ifstream in(filename, std::ios::binary);
-	if (!in)
-	{
-		std::cerr << "file error" << std::endl;
-		return;
-	}
-
-	in.unsetf(std::ios::skipws); // stop eating new lines in binary mode!
-
-	// get size:
-	std::streampos file_size;
-	in.seekg(0, std::ios::end);
-	auto file_size_in_bytes = in.tellg();
-	in.seekg(0, std::ios::beg);
-
-	const uint64_t expected_size_in_bytes = expected_number_of_elements * sizeof(T);
-	if (static_cast<uint64_t>(file_size_in_bytes) != expected_size_in_bytes)
-	{
-		std::cerr << "file error: " << std::endl;
-		std::cerr << "read: " << file_size_in_bytes << " bytes, but expected to read " << expected_size_in_bytes << " bytes." << std::endl;
-		return;
-	}
-
-	// reserve capacity 
-	store.resize(expected_number_of_elements);
-
-	// read the data
-	in.read((char*) &store[0], expected_size_in_bytes);
-	if (static_cast<uint64_t>(in.gcount()) != expected_size_in_bytes)
-	{
-		std::cerr << "file error: " << std::endl;
-		std::cerr << "bytes read: " << in.gcount() << std::endl;
-		std::cerr << "expected size in bytes: " << expected_size_in_bytes << std::endl;
-		return;
-	}
-
-	in.close();
 }
 

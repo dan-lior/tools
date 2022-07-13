@@ -1,8 +1,6 @@
 #pragma once
 
 #include "common_defs.h"
-#include "misc.h"
-#include "misc_math.h"
 #include "affinity.h"
 
 struct Polyline

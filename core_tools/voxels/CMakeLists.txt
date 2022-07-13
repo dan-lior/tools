@@ -7,7 +7,10 @@ target_include_directories(voxels PUBLIC "include/")
 
 target_include_directories(voxels PUBLIC "../common/include/") 
 target_include_directories(voxels PUBLIC "../../../eigen-3.4.0/")
+target_include_directories(voxels PUBLIC "../misc/include/") 
+target_include_directories(voxels PUBLIC "../misc_math/include/") 
+target_include_directories(voxels PUBLIC "../affinities/include/") 
 
-target_link_libraries(voxels affinities)
+target_link_libraries(voxels misc)
 target_link_libraries(voxels misc_math)
 

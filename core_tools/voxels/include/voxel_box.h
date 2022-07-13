@@ -50,18 +50,14 @@ struct LabelledGrid : public Grid<dim_target, dim_source>
 
     std::vector<T> get_labels() const;
 
-    // query this object to generate labels for probe
-    template<uint64_t dim_source_probe>
-    LabelledGrid<dim_target, dim_source_probe, T> label_probe(const Grid<dim_target, dim_source_probe>& probe) const;
+    // during export, the affinity stored in a grid is automatically applied to the points of the grid (via the position() member function),
+    // the attribute itself, however, is NOT transformed. 
+    void export_to_vtk(const std::string& filename) const;
 
-    // return a copy of the curent object with all labels cleared except those specified by probe
-    template<uint64_t dim_source_probe>
-    LabelledGrid<dim_target, dim_source, T> clear_labels_outside_probe(const Grid<dim_target, dim_source_probe>& probe) const;
+    private: 
 
-    // private: 
-    // const std::vector<T> labels;
+    const std::vector<T> labels;
 
-    std::vector<T> labels;
 };
 
 

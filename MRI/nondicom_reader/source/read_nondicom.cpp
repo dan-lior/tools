@@ -142,9 +142,9 @@ namespace
 
             const std::string suffix(std::to_string(1+it));
             
-            read_file(phasex_time_slices[it], directory_name + std::string("phasex_data/time_slices/") + suffix, num_cells);
-            read_file(phasey_time_slices[it], directory_name + std::string("phasey_data/time_slices/") + suffix, num_cells);
-            read_file(phasez_time_slices[it], directory_name + std::string("phasez_data/time_slices/") + suffix, num_cells);
+            Miscellaneous::read_file(phasex_time_slices[it], directory_name + std::string("phasex_data/time_slices/") + suffix, num_cells);
+            Miscellaneous::read_file(phasey_time_slices[it], directory_name + std::string("phasey_data/time_slices/") + suffix, num_cells);
+            Miscellaneous::read_file(phasez_time_slices[it], directory_name + std::string("phasez_data/time_slices/") + suffix, num_cells);
 
             std::vector<Vector<3>> velocity_time_slice = compute_velocities(metadata, phasex_time_slices[it], phasey_time_slices[it], phasez_time_slices[it]);
             assert(velocity_time_slice.size() == num_cells);		

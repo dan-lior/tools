@@ -31,5 +31,5 @@ target_link_libraries(coretools disjoint_unions)
 add_subdirectory(triangulations build_triangulations)
 target_link_libraries(coretools triangulations)
 
-add_subdirectory(quadrics build_quadrics)
-target_link_libraries(coretools quadrics)
+#add_subdirectory(quadrics build_quadrics)
+#target_link_libraries(coretools quadrics)

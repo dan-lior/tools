@@ -1,5 +1,62 @@
 #include "misc.h"
 
+
+void Miscellaneous::foo(){std::cerr << "foo" << std::endl;}
+
+void Miscellaneous::write_common_vtk_part(std::ofstream& file, const Index<3>& n, const std::vector<Vector<3>>& points)
+{
+    file << "# vtk DataFile Version 2.3" << std::endl; // prior to this version, numComp was not supported
+    file << "DANWUZHERE" << std::endl;
+    file << "ASCII" << std::endl;
+    file << "DATASET STRUCTURED_GRID" << std::endl;
+    file << "DIMENSIONS" << " " << n(0) << " " << n(1) << " " << n(2) << std::endl;
+    file << "POINTS" << " " << n(0)*n(1)*n(2) << " " << "double" << std::endl;
+
+    for (auto p : points)
+        file << p[0] << " " << p[1] << " " << p[2] << std::endl;
+}
+
+// label is just a short descriptive string that is displayed when visualizing vtk files with certain third party software (e.g. VisIt)
+void Miscellaneous::write_scalar_slice_to_vtk(
+    const Index<3>& n, 
+    const std::vector<Vector<3>>& points, 
+    const std::vector<double>& scalar_data, 
+    const std::string& label, 
+    const std::string& filename)
+{
+    std::ofstream file(filename, std::ios::binary);
+    write_common_vtk_part(file, n, points);        
+
+    file << "POINT_DATA " << n(0)*n(1)*n(2) << std::endl;
+    file << "SCALARS " << label << " double" << " " << 1 << std::endl;
+    file << "LOOKUP_TABLE default" << std::endl;
+
+    for (auto v : scalar_data) 
+        file << v << std::endl;
+
+    file.close();
+}
+
+// label is just a short descriptive string that is displayed when visualizing vtk files with certain third party software (e.g. VisIt)
+void Miscellaneous::write_vector_slice_to_vtk(
+    const Index<3>& n, 
+    const std::vector<Vector<3>>& points, 
+    const std::vector<Vector<3>>& velocities, 
+    const std::string& label, 
+    const std::string& filename)
+{
+    std::ofstream file(filename, std::ios::binary);
+    write_common_vtk_part(file, n, points);        
+
+    file << "POINT_DATA " << n(0)*n(1)*n(2) << std::endl;
+    file << "VECTORS " << label << " double" << std::endl;
+
+    for (auto v : velocities)
+        file << v[0] << " " << v[1] << " " << v[2] << std::endl;
+
+    file.close();
+}
+
 using json = nlohmann::json;
 json Miscellaneous::read_metadata(const std::string& filename)
 {

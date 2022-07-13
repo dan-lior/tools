@@ -5,16 +5,10 @@
 
 namespace Miscellaneous
 {
+    void foo();
+    
+
     nlohmann::json read_metadata(const std::string& filename);
-
-    // point clouds are always stored in vtk files as 3d points. 
-    // here, 1d and 2d points are represented as 3d points on the x-axis and xy-plane, respectively
-
-    template<uint64_t dim>
-    std::vector<Vector<dim>> read_points_from_vtk_file(const std::string& filename_vtk);
-
-    template<uint64_t dim>
-    void write_points_to_vtk_file(const std::vector<Vector<dim>>& vertices, const std::string& filename_vtk, bool connect_the_dots = false);
 
     bool validate_filename_extension(const std::string& filename, const std::string& expected_extension);
 
@@ -30,6 +24,35 @@ namespace Miscellaneous
     void verify_directory(const std::string& directory);
     void initialize_directory(const std::string& directory);
     void verify_file(const std::string& filename);
+
+
+    // point clouds are always stored in vtk files as 3d points. 
+    // here, 1d and 2d points are represented as 3d points on the x-axis and xy-plane, respectively
+
+    template<uint64_t dim>
+    std::vector<Vector<dim>> read_points_from_vtk_file(const std::string& filename_vtk);
+
+    template<uint64_t dim>
+    void write_points_to_vtk_file(const std::vector<Vector<dim>>& vertices, const std::string& filename_vtk, bool connect_the_dots = false);
+
+
+    void write_common_vtk_part(std::ofstream& file, const Index<3>& n, const std::vector<Vector<3>>& points);
+
+    // label is just a short descriptive string that is displayed when visualizing vtk files with certain third party software (e.g. VisIt)
+    void write_scalar_slice_to_vtk(
+        const Index<3>& n, 
+        const std::vector<Vector<3>>& points, 
+        const std::vector<double>& scalar_data, 
+        const std::string& label, 
+        const std::string& filename);
+
+    // label is just a short descriptive string that is displayed when visualizing vtk files with certain third party software (e.g. VisIt)
+    void write_vector_slice_to_vtk(
+        const Index<3>& n, 
+        const std::vector<Vector<3>>& points, 
+        const std::vector<Vector<3>>& velocities, 
+        const std::string& label, 
+        const std::string& filename);
 
 }
 

@@ -2,7 +2,6 @@
 
     #include "common_defs.h"
     #include "affinity.h"
-    #include "misc.h"
 
     class Conic
     {
