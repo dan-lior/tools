@@ -2,6 +2,7 @@
 
 #include "common_defs.h"
 #include "misc_math.h"
+#include "misc.h"
 
 // models an affine map: x --> Ax + b
 

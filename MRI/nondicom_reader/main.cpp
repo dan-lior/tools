@@ -40,8 +40,6 @@ int main()
     const std::string vtk_directory("/home/dan/git-repos/tools/MRI/vtk_data/patient2/");
     const std::string vtk_slice_directory = vtk_directory + std::string("slices/");
 
-    Miscellaneous::foo();
-
     assert(Miscellaneous::directory_exists(nondicom_directory));
     assert(Miscellaneous::directory_exists(vtk_directory));
     assert(Miscellaneous::directory_exists(vtk_slice_directory));

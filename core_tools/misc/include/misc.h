@@ -5,8 +5,7 @@
 
 namespace Miscellaneous
 {
-    void foo();
-    
+    std::pair<Matrix<3>, Vector<3>> read_from_mmo(const std::string& filename);
 
     nlohmann::json read_metadata(const std::string& filename);
 
