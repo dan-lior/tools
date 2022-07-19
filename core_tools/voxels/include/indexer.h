@@ -17,7 +17,7 @@ struct Indexer
     
     uint64_t num_cells() const;
     
-    const Index<dim> n;   
+    Index<dim> n;   
 };
 
 #include "indexer.hpp"

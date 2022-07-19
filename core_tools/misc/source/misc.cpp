@@ -13,7 +13,8 @@ void Miscellaneous::write_common_vtk_part(std::ofstream& file, const Index<3>& n
         file << p[0] << " " << p[1] << " " << p[2] << std::endl;
 }
 
-// label is just a short descriptive string that is displayed when visualizing vtk files with certain third party software (e.g. VisIt)
+
+template<>
 void Miscellaneous::write_scalar_slice_to_vtk(
     const Index<3>& n, 
     const std::vector<Vector<3>>& points, 
@@ -26,6 +27,27 @@ void Miscellaneous::write_scalar_slice_to_vtk(
 
     file << "POINT_DATA " << n(0)*n(1)*n(2) << std::endl;
     file << "SCALARS " << label << " double" << " " << 1 << std::endl;
+    file << "LOOKUP_TABLE default" << std::endl;
+
+    for (auto v : scalar_data) 
+        file << v << std::endl;
+
+    file.close();
+}
+
+template<>
+void Miscellaneous::write_scalar_slice_to_vtk(
+    const Index<3>& n, 
+    const std::vector<Vector<3>>& points, 
+    const std::vector<uint64_t>& scalar_data, 
+    const std::string& label, 
+    const std::string& filename)
+{
+    std::ofstream file(filename, std::ios::binary);
+    write_common_vtk_part(file, n, points);        
+
+    file << "POINT_DATA " << n(0)*n(1)*n(2) << std::endl;
+    file << "SCALARS " << label << " unsigned long " << 1 << std::endl;
     file << "LOOKUP_TABLE default" << std::endl;
 
     for (auto v : scalar_data) 

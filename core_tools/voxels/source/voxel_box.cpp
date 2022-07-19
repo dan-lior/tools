@@ -58,70 +58,82 @@ namespace
 }
 
 template<>
-void LabelledGrid<3, 2, double>::export_to_vtk(const std::string& filename) const
-{
-    const Index<2> n = indexer.n;
-    Index<3> n2;
-    n2(0) = n(0);
-    n2(1) = n(1);
-    n2(2) = 1;
-    
-    const Affinity<3,2> affinity = affinity;
-    const MatrixRect<3,2> A = affinity.linear_part;
-    const Vector<3> b = affinity.translation_part;
-    Matrix<3> A2 = Matrix<3>::Zero();
-    A2(0,0) = A(0,0);
-    A2(0,1) = A(0,1);
-    A2(1,0) = A(1,0);
-    A2(1,1) = A(1,1);
-    A2(2,0) = A(2,0);
-    A2(2,1) = A(2,1);
-
-    Grid<3, 3> thickened_grid(n2, Affinity<3,3>(A2,b));
-    LabelledGrid<3,3, double> labelled_thickened_grid(thickened_grid, get_labels());
-
-    std::cerr << "exporting scalar data" << std::endl;
-    Miscellaneous::write_scalar_slice_to_vtk(labelled_thickened_grid.indexer.n, labelled_thickened_grid.all_positions(), labelled_thickened_grid.get_labels(), "some_scalar_quantity", filename);
-}
-
-template<>
-void LabelledGrid<3, 2, Vector<3>>::export_to_vtk(const std::string& filename) const
-{
-    const Index<2> n = indexer.n;
-    Index<3> n2;
-    n2(0) = n(0);
-    n2(1) = n(1);
-    n2(2) = 1;
-    
-    const Affinity<3,2> affinity = affinity;
-    const MatrixRect<3,2> A = affinity.linear_part;
-    const Vector<3> b = affinity.translation_part;
-    Matrix<3> A2 = Matrix<3>::Zero();
-    A2(0,0) = A(0,0);
-    A2(0,1) = A(0,1);
-    A2(1,0) = A(1,0);
-    A2(1,1) = A(1,1);
-    A2(2,0) = A(2,0);
-    A2(2,1) = A(2,1);
-
-    Grid<3, 3> thickened_grid(n2, Affinity<3,3>(A2,b));
-    LabelledGrid<3,3, Vector<3>> labelled_thickened_grid(thickened_grid, get_labels());
-
-    std::cerr << "exporting vector data" << std::endl;
-    Miscellaneous::write_vector_slice_to_vtk(labelled_thickened_grid.indexer.n, labelled_thickened_grid.all_positions(), labelled_thickened_grid.get_labels(), "some_vector_quantity", filename);
-}
-
-template<>
-void LabelledGrid<3, 3, double>::export_to_vtk(const std::string& filename) const
+void LabelledGrid<3,3,double>::export_labelled_grid_to_vtk(const LabelledGrid<3,3,double>& labelled_grid, const std::string& filename)
 {
     std::cerr << "exporting scalar data" << std::endl;
-    Miscellaneous::write_scalar_slice_to_vtk(indexer.n, all_positions(), get_labels(), "some_scalar_quantity", filename);
+
+    Miscellaneous::write_scalar_slice_to_vtk<double>(labelled_grid.indexer.n, labelled_grid.all_positions(), labelled_grid.get_labels(), "some_scalar_quantity", filename);
 }
 
 template<>
-void LabelledGrid<3, 3, Vector<3>>::export_to_vtk(const std::string& filename) const
+void LabelledGrid<3,3,uint64_t>::export_labelled_grid_to_vtk(const LabelledGrid<3,3,uint64_t>& labelled_grid, const std::string& filename)
+{
+    std::cerr << "exporting scalar data" << std::endl;
+
+    Miscellaneous::write_scalar_slice_to_vtk<uint64_t>(labelled_grid.indexer.n, labelled_grid.all_positions(), labelled_grid.get_labels(), "some_scalar_quantity", filename);
+}
+
+template<>
+void LabelledGrid<3,3,Vector<3>>::export_labelled_grid_to_vtk(const LabelledGrid<3,3,Vector<3>>& labelled_grid, const std::string& filename)
 {
     std::cerr << "exporting vector data" << std::endl;
-    Miscellaneous::write_vector_slice_to_vtk(indexer.n, all_positions(), get_labels(), "some_vector_quantity", filename);
+    Miscellaneous::write_vector_slice_to_vtk(labelled_grid.indexer.n, labelled_grid.all_positions(), labelled_grid.get_labels(), "some_vector_quantity", filename);
 }
+
+
+// template<>
+// void LabelledGrid<3, 2, double>::export_labelled_grid_to_vtk(const std::string& filename) const
+// {
+//     const Index<2> n = indexer.n;
+//     Index<3> n2;
+//     n2(0) = n(0);
+//     n2(1) = n(1);
+//     n2(2) = 1;
+    
+//     const Affinity<3,2> affinity = affinity;
+//     const MatrixRect<3,2> A = affinity.linear_part;
+//     const Vector<3> b = affinity.translation_part;
+//     Matrix<3> A2 = Matrix<3>::Zero();
+//     A2(0,0) = A(0,0);
+//     A2(0,1) = A(0,1);
+//     A2(1,0) = A(1,0);
+//     A2(1,1) = A(1,1);
+//     A2(2,0) = A(2,0);
+//     A2(2,1) = A(2,1);
+
+//     Grid<3, 3> thickened_grid(n2, Affinity<3,3>(A2,b));
+//     LabelledGrid<3,3, double> labelled_thickened_grid(thickened_grid, get_labels());
+
+//     std::cerr << "exporting scalar data" << std::endl;
+//     Miscellaneous::write_scalar_slice_to_vtk(labelled_thickened_grid.indexer.n, labelled_thickened_grid.all_positions(), labelled_thickened_grid.get_labels(), "some_scalar_quantity", filename);
+// }
+
+// template<>
+// void LabelledGrid<3, 2, Vector<3>>::export_labelled_grid_to_vtk(const std::string& filename) const
+// {
+//     const Index<2> n = indexer.n;
+//     Index<3> n2;
+//     n2(0) = n(0);
+//     n2(1) = n(1);
+//     n2(2) = 1;
+    
+//     const Affinity<3,2> affinity = affinity;
+//     const MatrixRect<3,2> A = affinity.linear_part;
+//     const Vector<3> b = affinity.translation_part;
+//     Matrix<3> A2 = Matrix<3>::Zero();
+//     A2(0,0) = A(0,0);
+//     A2(0,1) = A(0,1);
+//     A2(1,0) = A(1,0);
+//     A2(1,1) = A(1,1);
+//     A2(2,0) = A(2,0);
+//     A2(2,1) = A(2,1);
+
+//     Grid<3, 3> thickened_grid(n2, Affinity<3,3>(A2,b));
+//     LabelledGrid<3,3, Vector<3>> labelled_thickened_grid(thickened_grid, get_labels());
+
+//     std::cerr << "exporting vector data" << std::endl;
+//     Miscellaneous::write_vector_slice_to_vtk(labelled_thickened_grid.indexer.n, labelled_thickened_grid.all_positions(), labelled_thickened_grid.get_labels(), "some_vector_quantity", filename);
+// }
+
+
 

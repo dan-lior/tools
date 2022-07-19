@@ -36,10 +36,11 @@ namespace Miscellaneous
     void write_common_vtk_part(std::ofstream& file, const Index<3>& n, const std::vector<Vector<3>>& points);
 
     // label is just a short descriptive string that is displayed when visualizing vtk files with certain third party software (e.g. VisIt)
+    template <typename T>
     void write_scalar_slice_to_vtk(
         const Index<3>& n, 
         const std::vector<Vector<3>>& points, 
-        const std::vector<double>& scalar_data, 
+        const std::vector<T>& scalar_data, 
         const std::string& label, 
         const std::string& filename);
 

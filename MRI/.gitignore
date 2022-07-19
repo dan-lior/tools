@@ -2,3 +2,4 @@ nondicom_data/
 vtk_data/
 *.out
 *.o
+data/

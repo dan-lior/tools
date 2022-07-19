@@ -5,6 +5,8 @@
 #include "affinity.h"
 #include "indexer.h"
 
+
+
 template<uint64_t dim_target, uint64_t dim_source>
 struct Grid
 {
@@ -39,25 +41,31 @@ struct Grid
         return rtn;
     }
 
-    const Indexer<dim_source> indexer;
-    const Affinity<dim_target, dim_source> affinity;
+    Indexer<dim_source> indexer;
+    Affinity<dim_target, dim_source> affinity;
 };
 
 template<uint64_t dim_target, uint64_t dim_source, typename T>
 struct LabelledGrid : public Grid<dim_target, dim_source>
 {
     LabelledGrid(const Grid<dim_target, dim_source>& grid, const std::vector<T>& labels);
-
+    
     std::vector<T> get_labels() const;
 
+    // assumes that all the slices have the same underlying grid
+    // time map specifies location and spacing of slices
+    static LabelledGrid<1 + dim_target, 1 + dim_source, T> stack_slices(const std::vector<LabelledGrid<dim_target, dim_source, T>>& slices, const Affinity<1,1>& time_map = Affinity<1,1>());
+
+    // discards information about time map
+    static std::vector<LabelledGrid<dim_target-1, dim_source-1, T>> unstack_slices(const LabelledGrid<dim_target, dim_source, T>& stacked_slices);
+
     // during export, the affinity stored in a grid is automatically applied to the points of the grid (via the position() member function),
-    // the attribute itself, however, is NOT transformed. 
-    void export_to_vtk(const std::string& filename) const;
+    // the labels themselves, however, are NOT transformed. 
+    static void export_labelled_grid_to_vtk(const LabelledGrid<dim_target, dim_source, T>& labelled_grid, const std::string& filename);
 
-    private: 
+private: 
 
-    const std::vector<T> labels;
-
+    std::vector<T> labels;
 };
 
 
