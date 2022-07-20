@@ -11,8 +11,11 @@ struct Indexer
 
     Index<dim> to_index(uint64_t rank) const;
     
+    // tobe depracated
     std::vector<uint64_t> neighbour_ranks(uint64_t rank, const Index<dim>& radii) const;
     
+    std::vector<std::vector<Index<dim>>> neighbourhoods(const Index<dim>& radii) const;
+
     bool out_of_range(Index<dim> index) const;
     
     uint64_t num_cells() const;

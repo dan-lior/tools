@@ -20,6 +20,10 @@ namespace MiscellaneousMath
     template<typename T>
     std::vector<std::vector<T>> cartesian_product(const std::vector<std::vector<T>>& sequences);
 
+    // TODO: implement this directly (will result in simpler, faster code)
+    template<uint64_t dim>
+    std::vector<Index<dim>> cartesian_product(const Index<dim>& min_corner, const Index<dim>& max_corner);
+
     std::array<Vector<3>,2> fit_line3d(const std::vector<Vector<3>>& points); 
 
     // returns a matrix that projects to the hyperplane perpendicular to n

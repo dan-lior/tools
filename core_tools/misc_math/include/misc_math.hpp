@@ -87,6 +87,38 @@ std::vector<std::vector<T>> MiscellaneousMath::cartesian_product(const std::vect
 }
 
 template<uint64_t dim>
+std::vector<Index<dim>> MiscellaneousMath::cartesian_product(const Index<dim>& min_corner, const Index<dim>& max_corner)
+{
+    // TODO: implement this directly (will result in simpler, faster code)
+
+    std::vector<std::vector<uint64_t>> sequences;
+
+    for (uint64_t i=0; i<dim; ++i)
+    {
+        std::vector<uint64_t> sequence;
+
+        for (uint64_t j=min_corner(i); j<= max_corner(i); ++j)
+            sequence.push_back(j);
+
+        sequences.push_back(sequence);
+    }
+
+    std::vector<std::vector<uint64_t>> temp = cartesian_product(sequences);
+
+    std::vector<Index<dim>> rtn;    
+    for (auto t : temp)
+    {
+        assert(t.size() == dim);
+        Index<dim> index;
+        for (uint64_t i=0; i<dim; ++i)
+            index(i) = t[i];
+        rtn.push_back(index);        
+    }
+    return rtn;
+}
+
+
+template<uint64_t dim>
 Eigen::Matrix<double, dim-1, dim> MiscellaneousMath::projection_matrix(const Vector<dim>& normal)
 {
     static_assert(dim > 0, "logic error");

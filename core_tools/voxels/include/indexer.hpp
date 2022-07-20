@@ -67,6 +67,54 @@ std::vector<uint64_t> Indexer<dim>::neighbour_ranks(uint64_t rank, const Index<d
 }
 
 template<uint64_t dim>
+std::vector<std::vector<Index<dim>>> Indexer<dim>::neighbourhoods(const Index<dim>& radii) const
+{
+    std::vector<std::vector<Index<dim>>> rtn;
+    for (uint64_t rank=0; rank<num_cells(); ++rank)
+    {
+        Index<dim> index = to_index(rank);
+
+        Index<dim> min_corner;
+        Index<dim> max_corner;
+        for (uint64_t i = 0; i < dim; ++ i)
+        {
+            min_corner(i) = (index(i) >= radii[i]) ? index(i) - radii[i] : 0;
+            max_corner(i) = std::min(index(i) + radii[i], n(i));
+        }
+
+//        rtn.push_back(MiscellaneousMath::cartesian_product<dim>(min_corner, max_corner)); // current implementation is too slow
+        static_assert(dim == 4, "debug assertion failed");
+        std::vector<Index<dim>> nhd;
+        for (uint64_t it = min_corner(3); it <= max_corner(3); ++it)
+            for (uint64_t iz = min_corner(2); iz <= max_corner(2); ++iz)
+                for (uint64_t iy = min_corner(1); iy <= max_corner(1); ++iy)
+                    for (uint64_t ix = min_corner(0); ix <= max_corner(0); ++ix)
+                        nhd.push_back(Index<dim>(ix,iy,iz,it));
+
+        if (rank%100000 == 0) // validation
+        {
+            std::cerr << rank << " of " << num_cells() << std::endl;
+            // std::cerr << std::endl;
+            // std::cerr << nhd_size << " : ";
+            // for (uint64_t i = 0; i < dim; ++ i)
+            //     std::cerr << max_corner(i) - min_corner(i) + 1<< " ";
+            uint64_t nhd_size = 1;
+            for (uint64_t i = 0; i < dim; ++ i)
+            {
+                assert(max_corner(i) >= min_corner(i));
+                assert(max_corner(i) - min_corner(i) + 1 <= 1 + 2*radii(i));
+                nhd_size *= (max_corner(i) - min_corner(i) + 1) ;
+            }
+            assert(nhd_size == nhd.size());
+        }
+
+        rtn.push_back(nhd);
+    }
+
+    return rtn;
+}
+
+template<uint64_t dim>
 bool Indexer<dim>::out_of_range(Index<dim> index) const
 {
     for (uint64_t i=0; i<dim; ++i)
