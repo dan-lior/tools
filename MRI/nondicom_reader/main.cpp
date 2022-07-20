@@ -5,7 +5,6 @@
 #include "voxel_box.h"
 #include "read_nondicom.h"
 #include "misc.h"
-//#include "math.h"
 
 namespace
 {
@@ -45,6 +44,8 @@ int main()
     assert(Miscellaneous::directory_exists(vtk_slice_directory));
 
     std::vector<LabelledGrid<3, 3, Vector<3>>> velocity_timeslices = read_nondicom(nondicom_directory);
+
+return 0; //debug
 
     // choose a single timeslice from which to determine geometry for the space slice
 

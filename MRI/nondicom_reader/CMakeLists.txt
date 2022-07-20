@@ -2,7 +2,7 @@ project(nondicom_reader)
 cmake_minimum_required(VERSION 3.16)
 set (CMAKE_CXX_STANDARD 17)
 
-set (CMAKE_BUILD_TYPE Debug)
+#set (CMAKE_BUILD_TYPE Debug)
 #set (CMAKE_BUILD_TYPE Release)
 #set (CMAKE_CXX_FLAGS "-Wall")
 #set (CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -Wunused")
@@ -24,8 +24,8 @@ target_include_directories(nondicom_reader PUBLIC "../../core_tools/misc/include
 target_link_libraries(nondicom_reader PUBLIC misc)
 
 
-# just for testing...
-add_executable(dummy main.cpp)
-target_link_libraries(dummy PUBLIC nondicom_reader)
-target_link_libraries(dummy PUBLIC voxels)
-target_link_libraries(dummy PUBLIC misc)
+# # just for testing...
+# add_executable(dummy main.cpp)
+# target_link_libraries(dummy PUBLIC nondicom_reader)
+# target_link_libraries(dummy PUBLIC voxels)
+# target_link_libraries(dummy PUBLIC misc)

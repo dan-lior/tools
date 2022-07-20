@@ -281,11 +281,17 @@ int main()
 	const std::string vtk_velocity_directory = vtk_directory + std::string("velocities/");
     std::filesystem::create_directory(vtk_velocity_directory);
 
-    std::vector<LabelledGrid<3, 3, Vector<3>>> velocity_timeslices = read_nondicom(nondicom_directory);
+    std::vector<LabelledGrid<3, 3, Vector<3>>> velocity_timeslices_all = read_nondicom(nondicom_directory);
     
-    // this works!
-    for (uint64_t i=0; i<velocity_timeslices.size(); ++i)
-        LabelledGrid<3, 3, Vector<3>> :: export_labelled_grid_to_vtk(velocity_timeslices[i], vtk_test1_directory + std::to_string(i) + std::string(".vtk"));
+
+    std::vector<LabelledGrid<3, 3, Vector<3>>> velocity_timeslices;
+    velocity_timeslices.push_back(velocity_timeslices_all[0]);
+    velocity_timeslices.push_back(velocity_timeslices_all[1]);
+    velocity_timeslices.push_back(velocity_timeslices_all[2]);
+    velocity_timeslices.push_back(velocity_timeslices_all[3]);
+
+    // for (uint64_t i=0; i<velocity_timeslices.size(); ++i)
+    //     LabelledGrid<3, 3, Vector<3>> :: export_labelled_grid_to_vtk(velocity_timeslices[i], vtk_test1_directory + std::to_string(i) + std::string(".vtk"));
 
     MatrixRect<1,1> A;
     A(0,0) = 37.5; // time_between_slices, in milliseconds;
@@ -295,10 +301,22 @@ int main()
     Affinity<1,1> time_map(A,b); 
     LabelledGrid<4, 4, Vector<3>> stacked = LabelledGrid<3, 3, Vector<3>>::stack_slices(velocity_timeslices, time_map);
 
-    std::vector<LabelledGrid<3, 3, Vector<3>>> unstacked = LabelledGrid<4, 4, Vector<3>>::unstack_slices(stacked);
+    // std::vector<LabelledGrid<3, 3, Vector<3>>> unstacked = LabelledGrid<4, 4, Vector<3>>::unstack_slices(stacked);
 
-    for (uint64_t i=0; i<unstacked.size(); ++i)
-        LabelledGrid<3, 3, Vector<3>> :: export_labelled_grid_to_vtk(unstacked[i], vtk_test2_directory + std::to_string(i) + std::string(".vtk"));
+    // for (uint64_t i=0; i<unstacked.size(); ++i)
+    //     LabelledGrid<3, 3, Vector<3>> :: export_labelled_grid_to_vtk(unstacked[i], vtk_test2_directory + std::to_string(i) + std::string(".vtk"));
+
+    const Index<4> nhd_dimensions(2,2,2,1);   //rx, ry, rz, rt
+    std::vector<std::vector<Index<4>>> neighbourhoods = stacked.indexer.neighbourhoods(nhd_dimensions);
+    
+    std::cerr << "nhd info:" << std::endl;
+    for (auto nhd : neighbourhoods)
+    {
+        std::cerr << nhd.size() << " ";
+    }
+    std::cerr << std::endl;
+
+
 
     return 0; //debug
 
